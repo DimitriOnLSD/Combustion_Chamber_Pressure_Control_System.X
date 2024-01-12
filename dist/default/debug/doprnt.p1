@@ -34,7 +34,7 @@ Version 4.0 HI-TECH Software Intermediate Code
 "27 C:\Program Files\Microchip\xc8\v2.45\pic\include\c99\string.h
 [; ;C:\Program Files\Microchip\xc8\v2.45\pic\include\c99\string.h: 27: void *memcpy (void *restrict, const void *restrict, size_t);
 [v _memcpy `(*v ~T0 @X0 0 ef3`*v`*Cv`ui ]
-[v F1193 `*v ~T0 @X0 -> -> 1 `i `ux t ]
+[v F1192 `*v ~T0 @X0 -> -> 1 `i `ux t ]
 "14 C:\Program Files\Microchip\xc8\v2.45\pic\include\c99\stdarg.h
 [v ___va_arg `(*v ~T0 @X0 0 ev`*v ]
 [p i ___va_arg ]
@@ -938,12 +938,12 @@ Version 4.0 HI-TECH Software Intermediate Code
 }
 "1158
 [; ;C:\Program Files\Microchip\xc8\v2.45\pic\sources\c99\common\doprnt.c: 1158: read_prec_or_width (const char **fmt, va_list *ap) {
-[v _read_prec_or_width `(i ~T0 @X0 1 sf2`**Cuc`*F1193 ]
+[v _read_prec_or_width `(i ~T0 @X0 1 sf2`**Cuc`*F1192 ]
 {
 [e :U _read_prec_or_width ]
 [v _fmt `**Cuc ~T0 @X0 1 r1 ]
-[v F1196 `*v ~T0 @X0 -> -> 1 `i `ux t ]
-[v _ap `*F1196 ~T0 @X0 1 r2 ]
+[v F1195 `*v ~T0 @X0 -> -> 1 `i `ux t ]
+[v _ap `*F1195 ~T0 @X0 1 r2 ]
 [f ]
 "1159
 [; ;C:\Program Files\Microchip\xc8\v2.45\pic\sources\c99\common\doprnt.c: 1159:     int n = 0;
@@ -1037,10 +1037,10 @@ Version 4.0 HI-TECH Software Intermediate Code
 "1205
 [; ;C:\Program Files\Microchip\xc8\v2.45\pic\sources\c99\common\doprnt.c: 1205:         prec = -1;
 [e = _prec -U -> 1 `i ]
-[v F1211 `*v ~T0 @X0 -> -> 1 `i `ux t ]
+[v F1210 `*v ~T0 @X0 -> -> 1 `i `ux t ]
 "1256
 [; ;C:\Program Files\Microchip\xc8\v2.45\pic\sources\c99\common\doprnt.c: 1256:   width = read_prec_or_width(fmt, ap);
-[e = _width ( _read_prec_or_width (2 , -> _fmt `**Cuc -> _ap `*F1211 ]
+[e = _width ( _read_prec_or_width (2 , -> _fmt `**Cuc -> _ap `*F1210 ]
 "1257
 [; ;C:\Program Files\Microchip\xc8\v2.45\pic\sources\c99\common\doprnt.c: 1257:   if (width < 0) {
 [e $ ! < _width -> 0 `i 86  ]
@@ -1062,10 +1062,10 @@ Version 4.0 HI-TECH Software Intermediate Code
 "1266
 [; ;C:\Program Files\Microchip\xc8\v2.45\pic\sources\c99\common\doprnt.c: 1266:             ++*fmt;
 [e =+ *U _fmt * -> -> 1 `i `x -> -> # *U *U _fmt `i `x ]
-[v F1212 `*v ~T0 @X0 -> -> 1 `i `ux t ]
+[v F1211 `*v ~T0 @X0 -> -> 1 `i `ux t ]
 "1267
 [; ;C:\Program Files\Microchip\xc8\v2.45\pic\sources\c99\common\doprnt.c: 1267:    prec = read_prec_or_width(fmt, ap);
-[e = _prec ( _read_prec_or_width (2 , -> _fmt `**Cuc -> _ap `*F1212 ]
+[e = _prec ( _read_prec_or_width (2 , -> _fmt `**Cuc -> _ap `*F1211 ]
 "1268
 [; ;C:\Program Files\Microchip\xc8\v2.45\pic\sources\c99\common\doprnt.c: 1268:   }
 }
