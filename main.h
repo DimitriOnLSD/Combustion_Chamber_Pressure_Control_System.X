@@ -7,12 +7,11 @@
  * @struct valve
  * @brief Structure to manage valve parameters.
  */
-struct valve
-{
-    int current_angle;    /**< Stores valve current opening angle */
-    int current_angle_percentage;    /**< Stores valve current opening angle in percentage */
-    int target_angle;     /**< Sets target open angle for valve */
-    int previous_angle;   /**< Stores last valve angle */
+struct valve {
+    int current_angle; /**< Stores valve current opening angle */
+    int current_angle_percentage; /**< Stores valve current opening angle in percentage */
+    int target_angle; /**< Sets target open angle for valve */
+    int previous_angle; /**< Stores last valve angle */
     int user_input_angle; /**< User-defined input angle */
 };
 
@@ -20,23 +19,21 @@ struct valve
  * @struct sensor
  * @brief Structure to manage sensor thresholds and data.
  */
-struct sensor
-{
-    int min_threshold;            /**< Sets minimum pressure threshold for combustion chamber */
-    int max_threshold;            /**< Sets maximum pressure threshold for combustion chamber */
+struct sensor {
+    int min_threshold; /**< Sets minimum pressure threshold for combustion chamber */
+    int max_threshold; /**< Sets maximum pressure threshold for combustion chamber */
     volatile double current_data; /**< Current sensor data */
-    double previous_data;         /**< Previous sensor data */
+    double previous_data; /**< Previous sensor data */
 };
 
 /**
  * @struct data
  * @brief Structure to manage general data and ADC updates.
  */
-struct data
-{
-    volatile double voltage;      /**< Voltage data */
+struct data {
+    volatile double voltage; /**< Voltage data */
     volatile adc_result_t result; /**< ADC result */
-    volatile bool update;         /**< Flag indicating ADC update */
+    volatile bool update; /**< Flag indicating ADC update */
 };
 /* FLAG CLEAR */
 
@@ -157,19 +154,19 @@ void ADC_interruptHandler(void);
 
 /* ALARM HANDLER */
 
-void turnOffAlarm();
+void shutdownAlarm();
 void triggerAlarm();
 
 /* PRESSURE HANDLERS */
 
 bool pressureOutsideThreshold();
 void updatePressureFromADC();
-int setPressureThreshold(int new_threshold);
+int setPressureThreshold(int original_threshold);
 
 /* MENU HANDLERS */
 
-void main_menu();
-void valve_control_menu();
+void mainMenu();
+void valveMenu();
 
 /* STEPPER MOTOR HANDLERS */
 

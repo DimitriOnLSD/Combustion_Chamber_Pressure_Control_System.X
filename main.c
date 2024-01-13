@@ -1,23 +1,19 @@
 #include "mcc_generated_files/mcc.h"
-#include <string.h>
-#include <ctype.h>
 #include "lib_ili9341.h"
-#include "xlcd.h"
 #include "main.h"
 
-#define STEPS_PER_REV 360
-#define BUZZER_DC 100
+#define BUZZER_ON 100
+#define BUZZER_OFF 0
 #define BUZZER_DURATION 1000
 #define TMR2_COUNTER 1000
 #define MIN_PRESSURE_THRESHOLD 10
 #define MAX_PRESSURE_THRESHOLD 150
 #define MAX_INPUT_LENGTH 4
-#define MAX_LCD_LENGTH 21
 #define MAX_TFT_LENGTH 50
 #define MAX_ADC_VALUE 1023.0
-#define MAX_VREF 5.0
+#define VREF 5.0
 
-bool new_data = false;
+bool bufferData = false;
 bool can_exit_loop = false;
 bool user_input = false;
 bool show_main_menu = true;
@@ -26,10 +22,8 @@ bool set_threshold = false;
 bool alarm_disabled = false; // disable the alarm
 bool user_override = false; // user can change stepper opening manually if true
 
-char rx_data;
+char receivedData;
 char string[MAX_TFT_LENGTH] = "";
-char mybuff1[MAX_LCD_LENGTH] = "MICROPROCESSADORES";
-char mybuff2[MAX_LCD_LENGTH] = "DEE-ESTG";
 int option = 0;
 int option_2nd = 0;
 int type = 0;
@@ -42,6 +36,9 @@ int count = 0; // Stores timer 2 counter
 // b=y2-m*x1 = 0 - 54.263105 * 0.263658 = -14.306901702602588740796434783779 ~= -14.306917
 const static double m = 54.263105;
 const static double b = -14.306917;
+
+// uint16_t *paulo = &image_data_paulo[0];
+// uint16_t *diogo = &image_data_diogo[0];
 
 struct sensor mpx4250 = {
     .min_threshold = MIN_PRESSURE_THRESHOLD,
@@ -82,12 +79,11 @@ void TMR1_interruptHandler(void) {
 void TMR2_interruptHandler(void) {
     count++;
     if (count >= TMR2_COUNTER) {
-        EPWM1_LoadDutyValue(BUZZER_DC);
+        EPWM1_LoadDutyValue(BUZZER_ON);
         if (count >= (TMR2_COUNTER + BUZZER_DURATION)) {
+            EPWM1_LoadDutyValue(BUZZER_OFF);
             count = 0;
         }
-    } else {
-        EPWM1_LoadDutyValue(0);
     }
     TMR2_InterruptFlagClear();
 }
@@ -97,7 +93,13 @@ void ADC_interruptHandler(void) {
     adc.result = ADC_GetConversionResult();
 }
 
-void turnOffAlarm() {
+void updatePressureFromADC() {
+    adc.voltage = (double) adc.result * VREF / MAX_ADC_VALUE;
+    mpx4250.current_data = m * adc.voltage + b;
+    adc.update = false;
+}
+
+void shutdownAlarm() {
     LED_LAT = 0;
     EPWM1_LoadDutyValue(0);
     TMR0_StopTimer();
@@ -121,62 +123,32 @@ bool pressureOutsideThreshold() {
     return (mpx4250.current_data <= mpx4250.min_threshold || mpx4250.current_data >= mpx4250.max_threshold);
 }
 
-void updatePressureFromADC() {
-    if (adc.update) {
-        adc.voltage = (double) adc.result * MAX_VREF / MAX_ADC_VALUE;
-        mpx4250.current_data = m * adc.voltage + b;
-        adc.update = false;
+bool dataIsDifferent(double old_data, double new_data) {
+    if (old_data != new_data) {
+        return true;
+    } else {
+        return false;
     }
-}
-
-void main_menu() {
-    EUSART1_Write(12);
-    printf("\r\n# SISTEMA DE CONTROLO DA PRESSAO DE UMA CAMARA DE COMBUSTAO #\r\n");
-
-    printf("\r\n[1] - Controlo da pressao - Modo: %s", user_override ? "Manual" : "Automatico");
-    printf("\r\n[2] - Definicao do grau de abertura da valvula");
-    printf("\r\n[3] - Definicao dos limiares de alarme para a pressao (MIN/MAX)\r\n");
-
-    printf("\r\nValor de pressao: %.2f kPa", mpx4250.current_data);
-    printf("\r\nAbertura da valvula: %d %%\r\n", stepper.current_angle_percentage);
-
-    if (show_error) {
-        printf("\r\nControlo da pressao tem de ser manual para definir um grau de abertura da valvula\r\n");
-    }
-
-    printf("\r\nOpcao: ");
-}
-
-void valve_control_menu() {
-    EUSART1_Write(12);
-    printf("\r\n[1] - 0%%");
-    printf("\r\n[2] - 25%%");
-    printf("\r\n[3] - 50%%");
-    printf("\r\n[4] - 75%%");
-    printf("\r\n[5] - 100%%");
-    printf("\r\n[0] - Sair (Controlo da pressao -> Automatico)\r\n");
-
-    printf("\r\nOpcao: ");
 }
 
 int setPressureThreshold(int original_threshold) {
-    uint8_t i = 0;
+    int i = 0;
     char str[MAX_INPUT_LENGTH] = {0}; // Initialize the string buffer
     bool set_threshold = true;
 
     while (set_threshold) {
         if (EUSART1_is_rx_ready()) {
-            char rx_data = EUSART1_Read();
+            char receivedData = EUSART1_Read();
 
-            if (isdigit(rx_data) && i < MAX_INPUT_LENGTH - 1) {
-                str[i++] = rx_data;
-                EUSART1_Write(rx_data);
-            } else if (rx_data == 8 && i > 0) { // Backspace
+            if (isdigit(receivedData) && i < MAX_INPUT_LENGTH - 1) {
+                str[i++] = receivedData;
+                EUSART1_Write(receivedData);
+            } else if (receivedData == 8 && i > 0) { // Backspace
                 i--;
                 EUSART1_Write(8);
                 EUSART1_Write(' '); // Clear the character on terminal
                 EUSART1_Write(8);
-            } else if (rx_data == 13) { // Enter
+            } else if (receivedData == 13) { // Enter
                 set_threshold = false;
                 str[i] = '\0';
                 return atoi(str);
@@ -195,17 +167,47 @@ void rotateSteps(int steps) {
         IN2_LAT = (sequence[i % 4] & 0b0010) > 0 ? 1 : 0;
         IN3_LAT = (sequence[i % 4] & 0b0100) > 0 ? 1 : 0;
         IN4_LAT = (sequence[i % 4] & 0b1000) > 0 ? 1 : 0;
-        // __delay_ms(5);
     }
 }
 
-int readInput() {
-    rx_data = EUSART1_Read();
-    if (isdigit(rx_data)) {
-        EUSART1_Write(rx_data);
-        new_data = true;
-        return rx_data;
+int readDigitFromSerial() {
+    receivedData = EUSART1_Read();
+    if (isdigit(receivedData)) {
+        EUSART1_Write(receivedData);
+        bufferData = true;
+        return receivedData;
     }
+}
+
+void mainMenu() {
+    EUSART1_Write(12);
+    printf("\r\n# SISTEMA DE CONTROLO DA PRESSAO DE UMA CAMARA DE COMBUSTAO #\r\n");
+
+    printf("\r\n[1] - Trocar o tipo de controlo da pressao");
+    printf("\r\n[2] - Definicao do grau de abertura da valvula");
+    printf("\r\n[3] - Definicao dos limiares do alarme para a pressao (MIN/MAX)\r\n");
+
+    printf("\r\nTipo de controlo: %s", user_override ? "Manual" : "Automatico");
+    printf("\r\nValor de pressao: %.2f kPa", mpx4250.current_data);
+    printf("\r\nAbertura da valvula: %d %%\r\n", stepper.current_angle_percentage);
+
+    if (show_error) {
+        printf("\r\nControlo da pressao tem de ser manual para definir um grau de abertura da valvula.\r\n");
+    }
+
+    printf("\r\nOpcao: ");
+}
+
+void valveMenu() {
+    EUSART1_Write(12);
+    printf("\r\n[1] - 0%%");
+    printf("\r\n[2] - 25%%");
+    printf("\r\n[3] - 50%%");
+    printf("\r\n[4] - 75%%");
+    printf("\r\n[5] - 100%%");
+    printf("\r\n[0] - Sair (Controlo da pressao -> Automatico)\r\n");
+
+    printf("\r\nOpcao: ");
 }
 
 void main(void) {
@@ -224,6 +226,8 @@ void main(void) {
 
     SPI2_Open(SPI2_DEFAULT);
 
+    shutdownAlarm();
+
     lcd_init();
 
     // Inofrmacao inicial que desaparece depois para aparecer as informacoes da pressao alarme etc...
@@ -232,24 +236,25 @@ void main(void) {
     lcd_draw_string(10, 170, string, RED, BLACK);
     snprintf(string, sizeof (string), "DE UMA CAMARA DE COMBUSTAO");
     lcd_draw_string(20, 150, string, RED, BLACK);
-    // INSERIR FOTOS NOSSAS
     snprintf(string, sizeof (string), "Autores: Paulo Sousa");
     lcd_draw_string(20, 45, string, YELLOW, BLACK);
+    // lcd_draw_image(180, 0, 75, 92, paulo);
     snprintf(string, sizeof (string), "Diogo Cravo");
     lcd_draw_string(90, 25, string, YELLOW, BLACK);
-
-    turnOffAlarm();
+    // lcd_draw_image(180, 0, 75, 92, diogo);
 
     while (1) {
-        updatePressureFromADC();
+        if (adc.update) {
+            updatePressureFromADC();
+        }
 
         if (alarm_disabled) {
-            turnOffAlarm();
+            shutdownAlarm();
         } else {
             if (pressureOutsideThreshold()) {
                 triggerAlarm();
             } else {
-                turnOffAlarm();
+                shutdownAlarm();
             }
         }
 
@@ -286,23 +291,25 @@ void main(void) {
             stepper.previous_angle = stepper.current_angle;
         }
 
-        if (EUSART1_is_rx_ready() && !set_threshold) {
-            option = readInput();
-        }
-
         if (show_main_menu || mpx4250.previous_data != mpx4250.current_data || stepper.previous_angle != stepper.current_angle) {
             mpx4250.previous_data = mpx4250.current_data;
             stepper.previous_angle = stepper.current_angle;
-            snprintf(string, sizeof (string), "Pressao: %2f", mpx4250.current_data);
+            lcd_draw_string(29, 110, "                                                 ", RED, BLACK);
+            snprintf(string, sizeof (string), "Pressao: %2f kPa", mpx4250.current_data);
             lcd_draw_string(20, 110, string, RED, BLACK);
+            lcd_draw_string(29, 90, "                                                 ", RED, BLACK);
             snprintf(string, sizeof (string), "Valvula: %d graus | %d%%", stepper.current_angle, stepper.current_angle_percentage);
             lcd_draw_string(20, 90, string, RED, BLACK);
-            main_menu();
+            mainMenu();
             show_error = false;
             show_main_menu = false;
         }
 
-        if (new_data) {
+        if (EUSART1_is_rx_ready() && !set_threshold) {
+            option = readDigitFromSerial();
+        }
+
+        if (bufferData) {
             switch (option) {
                 default:
                     break;
@@ -314,13 +321,13 @@ void main(void) {
                     if (!user_override) {
                         show_error = true;
                     } else {
-                        valve_control_menu();
+                        valveMenu();
 
                         can_exit_loop = false;
 
                         do {
                             if (EUSART1_is_rx_ready()) {
-                                option_2nd = readInput();
+                                option_2nd = readDigitFromSerial();
                             }
 
                             if (option_2nd >= '0' && option_2nd <= '5') {
@@ -372,7 +379,7 @@ void main(void) {
                     break;
             }
             show_main_menu = true;
-            new_data = false;
+            bufferData = false;
             option = 0;
             option_2nd = 0;
         }

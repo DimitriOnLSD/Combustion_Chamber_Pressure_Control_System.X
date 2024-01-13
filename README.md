@@ -15,10 +15,8 @@ Sistema de Alarme
 + Buzzer 0.5 Hz
 + Botao INT0
 
-Displays
+Display
 + TFT ILI9341
-! LCD LM017L
-! Visualizar valores pressao e valvula
 + Alerta da pressao
 
 Interface Série
