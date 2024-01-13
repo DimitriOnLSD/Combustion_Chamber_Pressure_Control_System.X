@@ -125,9 +125,6 @@ void updatePressureFromADC() {
     if (adc.update) {
         adc.voltage = (double) adc.result * MAX_VREF / MAX_ADC_VALUE;
         mpx4250.current_data = m * adc.voltage + b;
-  
-        mpx4250.current_data = (double) (adc.voltage/MAX_VREF-0.04 - 0.009);
- 
         adc.update = false;
     }
 }
