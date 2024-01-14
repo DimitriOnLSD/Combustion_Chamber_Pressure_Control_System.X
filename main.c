@@ -231,16 +231,11 @@ void main(void) {
     lcd_init();
 
     // Inofrmacao inicial que desaparece depois para aparecer as informacoes da pressao alarme etc...
-    lcd_draw_string(100, 210, "MINI-PROJETO", FUCHSIA, BLACK);
-    snprintf(string, sizeof (string), "SISTEMA DE CONTROLO DA PRESSAO");
-    lcd_draw_string(10, 170, string, RED, BLACK);
-    snprintf(string, sizeof (string), "DE UMA CAMARA DE COMBUSTAO");
-    lcd_draw_string(20, 150, string, RED, BLACK);
-    snprintf(string, sizeof (string), "Autores: Paulo Sousa");
-    lcd_draw_string(20, 45, string, YELLOW, BLACK);
+    lcd_draw_string(13, 205, "SISTEMA DE CONTROLO DA PRESSAO", FUCHSIA, BLACK);
+    lcd_draw_string(40, 175, "DA CAMARA DE COMBUSTAO", FUCHSIA, BLACK);
+    lcd_draw_string(20, 45, "Autores: Paulo Sousa", YELLOW, BLACK);
+    lcd_draw_string(90, 25, "Diogo Cravo", YELLOW, BLACK);
     // lcd_draw_image(180, 0, 75, 92, paulo);
-    snprintf(string, sizeof (string), "Diogo Cravo");
-    lcd_draw_string(90, 25, string, YELLOW, BLACK);
     // lcd_draw_image(180, 0, 75, 92, diogo);
 
     while (1) {
@@ -294,9 +289,12 @@ void main(void) {
         if (show_main_menu || mpx4250.previous_data != mpx4250.current_data || stepper.previous_angle != stepper.current_angle) {
             mpx4250.previous_data = mpx4250.current_data;
             stepper.previous_angle = stepper.current_angle;
-            lcd_draw_string(29, 110, "                                                 ", RED, BLACK);
-            snprintf(string, sizeof (string), "Pressao: %2f kPa", mpx4250.current_data);
-            lcd_draw_string(20, 110, string, RED, BLACK);
+            
+            
+            
+            lcd_draw_string(29, 120, "                                                 ", RED, BLACK);
+            snprintf(string, sizeof (string), "Pressao: %.2f kPa", mpx4250.current_data);
+            lcd_draw_string(20, 120, string, RED, BLACK);
             lcd_draw_string(29, 90, "                                                 ", RED, BLACK);
             snprintf(string, sizeof (string), "Valvula: %d graus | %d%%", stepper.current_angle, stepper.current_angle_percentage);
             lcd_draw_string(20, 90, string, RED, BLACK);

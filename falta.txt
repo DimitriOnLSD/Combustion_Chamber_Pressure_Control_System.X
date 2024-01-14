@@ -1,0 +1,7 @@
+//No relatorio
+//Falta portos IO
+//Nao sei porque o erro do eusart esta sempre a dar igual 
+//Contas timer 2 nao estao bem (O maximo pr2 é 255)
+//Contas timer 1 nao estao bem
+
+//Falta fluxograma
