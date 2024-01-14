@@ -213,6 +213,7 @@ void valveMenu() {
 void main(void) {
     SYSTEM_Initialize();
     ADC_SelectChannel(MPX4250_AN);
+   
 
     INT0_SetInterruptHandler(INT0_interruptHandler);
     TMR0_SetInterruptHandler(TMR0_interruptHandler);
@@ -226,15 +227,15 @@ void main(void) {
 
     SPI2_Open(SPI2_DEFAULT);
 
-    shutdownAlarm();
+    //shutdownAlarm();
 
     lcd_init();
 
     // Inofrmacao inicial que desaparece depois para aparecer as informacoes da pressao alarme etc...
-    lcd_draw_string(13, 205, "SISTEMA DE CONTROLO DA PRESSAO", FUCHSIA, BLACK);
-    lcd_draw_string(40, 175, "DA CAMARA DE COMBUSTAO", FUCHSIA, BLACK);
-    lcd_draw_string(20, 45, "Autores: Paulo Sousa", YELLOW, BLACK);
-    lcd_draw_string(90, 25, "Diogo Cravo", YELLOW, BLACK);
+    //lcd_draw_string(13, 205, "SISTEMA DE CONTROLO DA PRESSAO", FUCHSIA, BLACK);
+    //lcd_draw_string(40, 175, "DA CAMARA DE COMBUSTAO", FUCHSIA, BLACK);
+    //lcd_draw_string(20, 45, "Autores: Paulo Sousa", YELLOW, BLACK);
+   //lcd_draw_string(90, 25, "Diogo Cravo", YELLOW, BLACK);
     // lcd_draw_image(180, 0, 75, 92, paulo);
     // lcd_draw_image(180, 0, 75, 92, diogo);
 
