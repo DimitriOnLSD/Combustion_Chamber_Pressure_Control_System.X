@@ -614,7 +614,7 @@ int getchar(void);
 
 
 int ungetc(int, FILE *);
-
+int getch(void);
 
 int fputc(int, FILE *);
 int putc(int, FILE *);

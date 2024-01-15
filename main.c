@@ -43,7 +43,7 @@ int count = 0; // Stores timer 2 counter
 const static double m = 54.263105;
 const static double b = -14.306917;
 
-//uint16_t *paulo = &image_data_paulo[0];
+// uint16_t *paulo = &image_data_paulo[0];
 // uint16_t *diogo = &image_data_diogo[0];
 
 struct sensor mpx4250 = {
@@ -239,8 +239,8 @@ void main(void) {
     lcd_draw_string(40, 175, "DA CAMARA DE COMBUSTAO", FUCHSIA, BLACK);
     lcd_draw_string(20, 45, "Autores: Paulo Sousa", YELLOW, BLACK);
     lcd_draw_string(90, 25, "Diogo Cravo", YELLOW, BLACK);
-    //lcd_draw_image(180, 0, 75, 92, paulo);
-    //lcd_draw_image(180, 0, 75, 92, diogo);
+    // lcd_draw_image(180, 0, 75, 92, paulo);
+    // lcd_draw_image(180, 0, 75, 92, diogo);
 
     while (1) {
         if (adc.update) {
@@ -290,7 +290,7 @@ void main(void) {
             stepper.previous_angle = stepper.current_angle;
         }
 
-        if (show_main_menu || dataIsDifferent(mpx4250.previous_data, mpx4250.current_data) || dataIsDifferent(stepper.previous_angle, stepper.current_angle)){
+        if (show_main_menu || dataIsDifferent(mpx4250.previous_data, mpx4250.current_data) || dataIsDifferent(stepper.previous_angle, stepper.current_angle)) {
             mpx4250.previous_data = mpx4250.current_data;
             stepper.previous_angle = stepper.current_angle;
             lcd_fill_rect(85, 105, 225, 145, BLACK); // Clear old values
