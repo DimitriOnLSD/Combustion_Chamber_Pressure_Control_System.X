@@ -213,7 +213,7 @@ void valveMenu() {
 void main(void) {
     SYSTEM_Initialize();
     ADC_SelectChannel(MPX4250_AN);
-   
+
 
     INT0_SetInterruptHandler(INT0_interruptHandler);
     TMR0_SetInterruptHandler(TMR0_interruptHandler);
@@ -227,17 +227,14 @@ void main(void) {
 
     SPI2_Open(SPI2_DEFAULT);
 
-    //shutdownAlarm();
+    shutdownAlarm();
 
     lcd_init();
 
-    // Inofrmacao inicial que desaparece depois para aparecer as informacoes da pressao alarme etc...
-    //lcd_draw_string(13, 205, "SISTEMA DE CONTROLO DA PRESSAO", FUCHSIA, BLACK);
-    //lcd_draw_string(40, 175, "DA CAMARA DE COMBUSTAO", FUCHSIA, BLACK);
-    //lcd_draw_string(20, 45, "Autores: Paulo Sousa", YELLOW, BLACK);
-   //lcd_draw_string(90, 25, "Diogo Cravo", YELLOW, BLACK);
-    // lcd_draw_image(180, 0, 75, 92, paulo);
-    // lcd_draw_image(180, 0, 75, 92, diogo);
+    lcd_draw_string(13, 205, "SISTEMA DE CONTROLO DA PRESSAO", FUCHSIA, BLACK);
+    lcd_draw_string(40, 175, "DA CAMARA DE COMBUSTAO", FUCHSIA, BLACK);
+    lcd_draw_string(20, 45, "Autores: Paulo Sousa", YELLOW, BLACK);
+    lcd_draw_string(90, 25, "Diogo Cravo", YELLOW, BLACK);
 
     while (1) {
         if (adc.update) {
@@ -290,9 +287,9 @@ void main(void) {
         if (show_main_menu || mpx4250.previous_data != mpx4250.current_data || stepper.previous_angle != stepper.current_angle) {
             mpx4250.previous_data = mpx4250.current_data;
             stepper.previous_angle = stepper.current_angle;
-            
-            
-            
+
+
+
             lcd_draw_string(29, 120, "                                                 ", RED, BLACK);
             snprintf(string, sizeof (string), "Pressao: %.2f kPa", mpx4250.current_data);
             lcd_draw_string(20, 120, string, RED, BLACK);
