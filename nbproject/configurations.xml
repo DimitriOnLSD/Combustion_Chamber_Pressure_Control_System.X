@@ -21,7 +21,6 @@
         <itemPath>mcc_generated_files/spi2.h</itemPath>
       </logicalFolder>
       <itemPath>lib_ili9341.h</itemPath>
-      <itemPath>xlcd.h</itemPath>
       <itemPath>main.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
@@ -49,7 +48,6 @@
       </logicalFolder>
       <itemPath>main.c</itemPath>
       <itemPath>lib_ili9341.c</itemPath>
-      <itemPath>xlcd.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

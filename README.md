@@ -11,8 +11,8 @@ Atuação da Válvula
 + Motor de passo
 
 Sistema de Alarme
-+ LED 2 Hz
-+ Buzzer 0.5 Hz
++ LED 2 Hz (250.03 ms)
++ Buzzer 0.5 Hz (2022 ms)
 + Botao INT0
 
 Display
@@ -25,4 +25,6 @@ Interface Série
 + Alterar maximo e minimo (sistema alarme)
 + Visualizar valores pressao e valvula
 
+Relatorio
++ Sim
 ```

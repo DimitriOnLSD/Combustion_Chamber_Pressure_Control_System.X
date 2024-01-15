@@ -161,7 +161,7 @@ void triggerAlarm();
 
 bool pressureOutsideThreshold();
 void updatePressureFromADC();
-int setPressureThreshold(int original_threshold);
+int setPressureThreshold(int);
 
 /* MENU HANDLERS */
 
@@ -170,7 +170,15 @@ void valveMenu();
 
 /* STEPPER MOTOR HANDLERS */
 
-void rotateSteps(int steps);
+void rotateSteps(int);
+
+/* DATA HANDLERS */
+
+bool dataIsDifferent(double, double);
+
+/* SERIAL HANDLERS */
+
+int readDigitFromSerial();
 
 /* MAIN */
 
