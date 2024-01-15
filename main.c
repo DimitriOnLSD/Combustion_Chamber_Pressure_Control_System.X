@@ -105,7 +105,7 @@ void shutdownAlarm() {
     TMR0_StopTimer();
     TMR2_StopTimer();
     count = TMR2_COUNTER;
-    lcd_draw_string(20, 70, "                                                 ", RED, BLACK);
+    lcd_draw_string(20, 80, "                                                 ", RED, BLACK);
 }
 
 void triggerAlarm() {
@@ -114,7 +114,7 @@ void triggerAlarm() {
     } else {
         snprintf(string, sizeof (string), "ALARME! Pressao alta!");
     }
-    lcd_draw_string(20, 70, string, RED, BLACK);
+    lcd_draw_string(20, 80, string, RED, BLACK);
     TMR0_StartTimer();
     TMR2_StartTimer();
 }
@@ -231,10 +231,13 @@ void main(void) {
 
     lcd_init();
 
+
     lcd_draw_string(13, 205, "SISTEMA DE CONTROLO DA PRESSAO", FUCHSIA, BLACK);
     lcd_draw_string(40, 175, "DA CAMARA DE COMBUSTAO", FUCHSIA, BLACK);
     lcd_draw_string(20, 45, "Autores: Paulo Sousa", YELLOW, BLACK);
     lcd_draw_string(90, 25, "Diogo Cravo", YELLOW, BLACK);
+    //lcd_draw_image(180, 0, 75, 92, paulo);
+    // lcd_draw_image(180, 0, 75, 92, diogo);
 
     while (1) {
         if (adc.update) {
@@ -290,12 +293,12 @@ void main(void) {
 
 
 
-            lcd_draw_string(29, 120, "                                                 ", RED, BLACK);
+            lcd_draw_string(20, 130, "                                                 ", RED, BLACK);
             snprintf(string, sizeof (string), "Pressao: %.2f kPa", mpx4250.current_data);
-            lcd_draw_string(20, 120, string, RED, BLACK);
-            lcd_draw_string(29, 90, "                                                 ", RED, BLACK);
-            snprintf(string, sizeof (string), "Valvula: %d graus | %d%%", stepper.current_angle, stepper.current_angle_percentage);
-            lcd_draw_string(20, 90, string, RED, BLACK);
+            lcd_draw_string(20, 130, string, RED, BLACK);
+            lcd_draw_string(20, 105, "                                                           ", RED, BLACK);
+            snprintf(string, sizeof (string), "Valvula: %d graus ( %d%% )", stepper.current_angle, stepper.current_angle_percentage);
+            lcd_draw_string(20, 105, string, RED, BLACK);
             mainMenu();
             show_error = false;
             show_main_menu = false;
